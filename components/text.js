@@ -20,7 +20,7 @@ export default function CustomText(props){
 	const font = new FontLoader().parse(pacifico);
 	const { camera } = useThree();
 	useFrame(() => {
-		mat_ref.current.rotation.copy(camera.rotation);
+		// mat_ref.current.rotation.copy(camera.rotation);
 		// mat_ref.current.rotation.x = camera.rotation.x;
 		// mat_ref.current.rotation.y = camera.rotation.y;
 		// mat_ref.current.rotation.z = camera.rotation.z;

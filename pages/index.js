@@ -1,8 +1,8 @@
 import * as THREE from "three";
 
-import { use, useEffect, useState, useRef } from "react";
+import {useEffect, useState, useRef } from "react";
 
-import {Canvas, useFrame, useThree} from "@react-three/fiber";
+import {Canvas, useFrame, useLoader} from "@react-three/fiber";
 
 import styles from "../styles/Home.module.css";
 
@@ -17,7 +17,7 @@ import Cake from "@/components/Cake";
 
 import Text from "../components/text";
 
-import { TextureLoader } from "three";
+import { TextureLoader } from 'three/src/loaders/TextureLoader';
 
 function Bob(props) {
 	const group_ref = useRef();
@@ -30,8 +30,9 @@ function Bob(props) {
 		let t = clock.getElapsedTime();
 		let a = Math.cos(t);
 		let b = Math.sin(t);
-		group_ref.current.rotation.y += b * 0.001;
-		group_ref.current.rotation.x += a * 0.001;
+		group_ref.current.rotation.y += props.y ? b * 0.0005 : 0;
+		group_ref.current.rotation.z +=	props.x ? a * 0.0005 : 0;
+		group_ref.current.rotation.x += props.z ? a * 0.0005 : 0;
 	});
 
 	return (
@@ -43,6 +44,36 @@ function Bob(props) {
 	)
 }
 
+function Photos() {
+	const tex_01 = useLoader(TextureLoader, 'textures/mum_02.jpg');
+	const tex_02 = useLoader(TextureLoader, 'textures/gillian_01.jpg');
+	return (
+		<Bob y>
+			<mesh
+				rotation={[0, (Math.PI / 4), 0]}
+				position={[-100,20,-30]}
+			>
+				<planeGeometry args={[200,200]}/>
+				<meshBasicMaterial
+					color={0xd3d3d3}
+					map={tex_01}
+					side={THREE.FrontSide}
+				/>
+			</mesh>
+			<mesh
+				rotation={[0, (Math.PI / -4), 0]}
+				position={[100,20,-30]}
+			>
+				<planeGeometry args={[200,200]}/>
+				<meshBasicMaterial 
+					color={0xd3d3d3}
+					map={tex_02}
+					side={THREE.FrontSide}
+				/>
+			</mesh>
+		</Bob>
+	);
+}
 export default function Home() {
 	return (
 		<div className={styles.scene}>
@@ -63,44 +94,27 @@ export default function Home() {
 					maxDistance={1000}
 					minDistance={100}
 				/>
-				<ambientLight intensity={0.5} fallback={null}/>
+				<ambientLight intensity={0.2} fallback={null}/>
+				<directionalLight 
+					position={[0, 300, 100]}
+					intensity={0.2} fallback={null}/>
 				<SpotLight 
 					color={0x800080}
 				/>
 				<Star stars={20000}/>
-				<Zoom f_pos={100} />
-				<mesh
-					rotation={[0, (Math.PI / 4), 0]}
-					position={[-80,20,-30]}
-				>
-					<planeGeometry args={[150,150]}/>
-					<meshBasicMaterial
-
-						color={"blue"}
-						side={THREE.FrontSide}
+				<Zoom f_pos={140} />
+				<Photos/>
+				<Bob x z>
+					<Text 
+						position={[0,1,0]}
+						scale={10}
+						text={"Happy Birthday!"}
 					/>
-				</mesh>
-				<mesh
-					rotation={[0, (Math.PI / -4), 0]}
-					position={[80,20,-30]}
-				>
-					<planeGeometry args={[150,150]}/>
-					<meshBasicMaterial 
-						color={"blue"}
-						side={THREE.FrontSide}
+					<Text 
+						position={[0,-11,0]}
+						scale={8}
+						text={"July 11, 2023"}
 					/>
-				</mesh>
-				<Text 
-					position={[0,-10,0]}
-					scale={10}
-					text={"Happy Birthday!"}
-				/>
-				<Text 
-					position={[0,-20,0]}
-					scale={8}
-					text={"July 11, 2023"}
-				/>
-				<Bob>
 					<Cake position={[0,-90,0]} scale={8.5}/>
 				</Bob>
 			</Canvas>
